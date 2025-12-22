@@ -5,17 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
 use App\Http\Requests\JobCategoreCreateRequest;
+use App\Http\Requests\JobCategoreUpdateRequest;
 
 class JobCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = JobCategory::latest();
-        $jobCategories = $query->paginate(2)->onEachSide(1);
-        return view('job-category.index', compact('jobCategories'));
+        $status = $request->query('status');
+        $query = JobCategory::query();
+
+        if ($status === 'archived') {
+            $query->onlyTrashed();
+        } else {
+            $query->latest();
+        }
+
+        $jobCategories = $query->paginate(4)->withQueryString();
+
+        return view('job-category.index', compact('jobCategories', 'status'));
     }
 
     /**
@@ -47,24 +57,45 @@ class JobCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JobCategory $jobCategory)
     {
-        //
+        return view('job-category.edit', compact('jobCategory'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(JobCategoreUpdateRequest $request, JobCategory $jobCategory)
     {
-        //
+        $validated = $request->validated();
+        $jobCategory->update($validated);
+
+        return redirect()->route('job-categories.index')
+                         ->with('success', 'Job category updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(JobCategory $jobCategory)
     {
-        //
+        $jobCategory->delete();
+
+        return redirect()
+            ->route('job-categories.index')
+            ->with('success', 'Job category archived successfully');
+    }
+
+    /**
+     * Restore a soft-deleted category.
+     */
+    public function restore(string $id)
+    {
+        $jobCategory = JobCategory::withTrashed()->findOrFail($id);
+        $jobCategory->restore();
+
+        return redirect()
+            ->route('job-categories.index', ['status' => 'archived'])
+            ->with('success', 'Job category restored successfully');
     }
 }

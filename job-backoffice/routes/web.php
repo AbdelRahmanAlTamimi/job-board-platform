@@ -21,6 +21,9 @@ Route::middleware('auth')->group(function () {
 
     // Job Category Resource Routes
     Route::resource('job-categories', JobCategoryController::class);
+    Route::post('job-categories/{jobCategory}/restore', [JobCategoryController::class, 'restore'])
+        ->withTrashed()
+        ->name('job-categories.restore');
 
     // Job Vacancy Resource Routes
     Route::resource('job-vacancies', JobVacancyController::class);
