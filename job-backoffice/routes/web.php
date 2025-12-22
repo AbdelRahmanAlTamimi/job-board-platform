@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::put('job-applications/{jobApplication}/restore', [JobApplicationController::class, 'restore'])
         ->withTrashed()
         ->name('job-applications.restore');
+
     // Job Category Resource Routes
     Route::resource('job-categories', JobCategoryController::class);
     Route::put('job-categories/{jobCategory}/restore', [JobCategoryController::class, 'restore'])
@@ -38,6 +39,9 @@ Route::middleware('auth')->group(function () {
 
     // User Resource Routes
     Route::resource('users', UserController::class);
+    Route::put('users/{user}/restore', [UserController::class, 'restore'])
+        ->withTrashed()
+        ->name('users.restore');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
