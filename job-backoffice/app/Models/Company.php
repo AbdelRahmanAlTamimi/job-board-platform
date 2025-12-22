@@ -44,4 +44,17 @@ class Company extends Model
     {
         return $this->hasMany(JobVacancy::class, 'companyId','id');
     }
+
+    public function jobApplications()
+    {
+        // Pull applications via the company's vacancies to avoid relying on a missing companyId column on job_applications.
+        return $this->hasManyThrough(
+            JobApplication::class,
+            JobVacancy::class,
+            'companyId',      // Foreign key on job_vacancies pointing to companies
+            'jobVacancyId',   // Foreign key on job_applications pointing to job_vacancies
+            'id',             // Local key on companies
+            'id'              // Local key on job_vacancies
+        );
+    }
 }

@@ -15,18 +15,24 @@ Route::middleware('auth')->group(function () {
     
     // Company Resource Routes
     Route::resource('companies', CompanyController::class);
+    Route::put('companies/{company}/restore', [CompanyController::class, 'restore'])
+        ->withTrashed()
+        ->name('companies.restore');
 
     // Job Application Resource Routes
     Route::resource('job-applications', JobApplicationController::class);
 
     // Job Category Resource Routes
     Route::resource('job-categories', JobCategoryController::class);
-    Route::post('job-categories/{jobCategory}/restore', [JobCategoryController::class, 'restore'])
+    Route::put('job-categories/{jobCategory}/restore', [JobCategoryController::class, 'restore'])
         ->withTrashed()
         ->name('job-categories.restore');
 
     // Job Vacancy Resource Routes
     Route::resource('job-vacancies', JobVacancyController::class);
+    Route::put('job-vacancies/{jobVacancy}/restore', [JobVacancyController::class, 'restore'])
+        ->withTrashed()
+        ->name('job-vacancies.restore');
 
     // User Resource Routes
     Route::resource('users', UserController::class);

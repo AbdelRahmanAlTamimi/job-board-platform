@@ -5,9 +5,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <x-toast-notification type="success" :message="session('success')" />
-            @endif
+            <x-toast-notification />
 
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
@@ -52,7 +50,7 @@
                                     <td class="px-6 py-4 text-sm">
                                         @if (($status ?? null) === 'archived')
                                             <div class="flex justify-end items-center space-x-4">
-                                                <form action="{{ route('job-categories.restore', $jobCategory->id) }}" method="POST">
+                                                <form action="{{ route('job-categories.restore', $jobCategory->id) }}" method="PUT">
                                                     @csrf
                                                     <button type="submit"
                                                             class="text-emerald-600 hover:text-emerald-700 font-semibold flex items-center space-x-1">

@@ -45,7 +45,7 @@ class JobApplication extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userId','id');
+        return $this->belongsTo(User::class, 'jobSeekerId','id');
     }
 
     public function resume()

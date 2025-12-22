@@ -27,6 +27,7 @@ return new class extends Migration
 
             $table->uuid('resumeId');
             $table->foreign('resumeId')->references('id')->on('resumes')->onDelete('restrict');
+
         });
     }
 

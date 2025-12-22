@@ -41,7 +41,7 @@ class JobVacancy extends Model
 
     public function company()
     {
-        return $this->belongsTo(Company::class, 'companyId','id');
+        return $this->belongsTo(Company::class, 'companyId','id')->withTrashed();
     }
 
     public function jobCategory()
