@@ -12,11 +12,21 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/',[DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/company',[CompanyController::class, 'index'])->name('company.index');
-    Route::get('/application',[JobApplicationController::class, 'index'])->name('application.index');
-    Route::get('/category',[JobCategoryController::class, 'index'])->name('category.index');
-    Route::get('/job-vacancy',[JobVacancyController::class, 'index'])->name('job-vacancy.index');
-    Route::get('/user',[UserController::class, 'index'])->name('user.index');
+    
+    // Company Resource Routes
+    Route::resource('companies', CompanyController::class);
+
+    // Job Application Resource Routes
+    Route::resource('job-applications', JobApplicationController::class);
+
+    // Job Category Resource Routes
+    Route::resource('job-categories', JobCategoryController::class);
+
+    // Job Vacancy Resource Routes
+    Route::resource('job-vacancies', JobVacancyController::class);
+
+    // User Resource Routes
+    Route::resource('users', UserController::class);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
