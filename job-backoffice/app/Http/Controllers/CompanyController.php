@@ -70,7 +70,7 @@ class CompanyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(?string $id = null)
     {
         $company = $this->getCompany($id);
 
@@ -80,7 +80,7 @@ class CompanyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(?string $id = null)
     {
         $company = $this->getCompany($id);
 
@@ -91,7 +91,7 @@ class CompanyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CompanyUpdateRequest $request, string $id = null)
+    public function update(CompanyUpdateRequest $request, ?string $id = null)
     {
         $validated = $request->validated();
         $company = $this->getCompany($id);
@@ -142,7 +142,7 @@ class CompanyController extends Controller
     }
 
 
-    private function getCompany(string $id)
+    private function getCompany(?string $id = null)
     {
         if ($id) {
             return Company::findOrFail($id);

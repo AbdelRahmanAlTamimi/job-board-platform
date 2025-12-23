@@ -1,50 +1,46 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobVacancyController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
+// Shared Routes
+Route::middleware(['auth', 'role:admin,company-owner'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/',[DashboardController::class, 'index'])->name('dashboard');
-    
-    // Company Resource Routes
-    Route::resource('companies', CompanyController::class);
-    Route::put('companies/{company}/restore', [CompanyController::class, 'restore'])
-        ->withTrashed()
-        ->name('companies.restore');
-
-    // Job Application Resource Routes
+    // Job Applications
     Route::resource('job-applications', JobApplicationController::class);
-    Route::put('job-applications/{jobApplication}/restore', [JobApplicationController::class, 'restore'])
-        ->withTrashed()
-        ->name('job-applications.restore');
+    Route::put('job-applications/{id}/restore', [JobApplicationController::class, 'restore'])->name('job-applications.restore');
 
-    // Job Category Resource Routes
-    Route::resource('job-categories', JobCategoryController::class);
-    Route::put('job-categories/{jobCategory}/restore', [JobCategoryController::class, 'restore'])
-        ->withTrashed()
-        ->name('job-categories.restore');
-
-    // Job Vacancy Resource Routes
+    // Job Vacancies
     Route::resource('job-vacancies', JobVacancyController::class);
-    Route::put('job-vacancies/{jobVacancy}/restore', [JobVacancyController::class, 'restore'])
-        ->withTrashed()
-        ->name('job-vacancies.restore');
-
-    // User Resource Routes
-    Route::resource('users', UserController::class);
-    Route::put('users/{user}/restore', [UserController::class, 'restore'])
-        ->withTrashed()
-        ->name('users.restore');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('job-vacancies/{id}/restore', [JobVacancyController::class, 'restore'])->name('job-vacancies.restore');
 });
 
-require __DIR__.'/auth.php';
+// Company Routes
+Route::middleware(['auth', 'role:company-owner'])->group(function () {
+    Route::get('/my-company', [CompanyController::class, 'show'])->name('my-company.show');
+    Route::get('/my-company/edit', [CompanyController::class, 'edit'])->name('my-company.edit');
+    Route::put('/my-company', [CompanyController::class, 'update'])->name('my-company.update');
+});
+
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Job Categories
+    Route::resource('job-categories', JobCategoryController::class);
+    Route::put('job-categories/{id}/restore', [JobCategoryController::class, 'restore'])->name('job-categories.restore');
+
+    // Users
+    Route::resource('users', UserController::class);
+    Route::put('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+
+    // Companies
+    Route::resource('companies', CompanyController::class);
+    Route::put('companies/{id}/restore', [CompanyController::class, 'restore'])->name('companies.restore');
+});
+
+require __DIR__ . '/auth.php';
