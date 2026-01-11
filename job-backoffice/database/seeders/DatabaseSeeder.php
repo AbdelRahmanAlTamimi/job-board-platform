@@ -95,9 +95,9 @@ class DatabaseSeeder extends Seeder
             ]);
 
             // create resume
-            $resume = Resume::Create([
+            $resume = Resume::create([
                 'jobSeekerId' => $jobSeeker->id,
-                'filename' => $application['resume']['filename'],
+                'fileName' => $application['resume']['fileName'],
                 'fileUrl' => $application['resume']['fileUrl'],
                 'contactDetails' => $application['resume']['contactDetails'],
                 'summary' => $application['resume']['summary'],

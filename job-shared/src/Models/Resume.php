@@ -6,26 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Company;
-use App\Models\JobCategory;
+use App\Models\User;
+use App\Models\JobApplication;
 
-class JobVacancy extends Model
+class Resume extends Model
 {
     use SoftDeletes, HasUuids, HasFactory;
-    
-    protected $table = 'job_vacancies';
+
+    protected $table = 'resumes';
 
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [
-        'title',
-        'description',
-        'location',
-        'salary',
-        'companyId',
-        'jobCategoryId',
-        'type'
+        'fileName',
+        'fileUrl',
+        'contactDetails',
+        'summary',
+        'education',
+        'experience',
+        'skills',
+        'jobSeekerId'
     ];
 
     protected $dates = [
@@ -39,18 +40,13 @@ class JobVacancy extends Model
         ];
     }
 
-    public function company()
+    public function user()
     {
-        return $this->belongsTo(Company::class, 'companyId','id')->withTrashed();
-    }
-
-    public function jobCategory()
-    {
-        return $this->belongsTo(JobCategory::class, 'jobCategoryId','id');
+        return $this->belongsTo(User::class, 'jobSeekerId','id');
     }
 
     public function jobApplications()
     {
-        return $this->hasMany(JobApplication::class, 'jobVacancyId','id');
+        return $this->hasMany(JobApplication::class, 'resumeId','id');
     }
 }

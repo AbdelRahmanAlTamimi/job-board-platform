@@ -9,6 +9,7 @@ use App\Models\JobVacancy;
 use OpenAI\Laravel\Facades\OpenAI;
 use App\Http\Requests\ApplyJobRequest;
 use App\Services\ResumeAnalysisService;
+use Illuminate\Support\Facades\Storage;
 class JobVacancyController extends Controller
 {
     protected $resumeAnalysisService;
@@ -43,20 +44,25 @@ class JobVacancyController extends Controller
             $originalFileName = $file->getClientOriginalName();
             $fileName = 'resume_' . time() . '.' . $extension;
 
-            // Store in laravel cloud
+            // Store locally on the public disk so we never rely on S3.
+            $disk = 'public';
             $path = $file->storeAs('resumes', $fileName, [
-                'disk' => 'cloud',
+                'disk' => $disk,
                 'visibility' => 'public'
             ]);
 
-            $fileUrl = config('filesystems.disks.cloud.url') . '/' . $path;
+            if (!$path) {
+                return back()->withErrors(['resume_file' => 'Unable to store resume file. Please try again.']);
+            }
+
+            $fileUrl = $path ? Storage::disk($disk)->url($path) : null;
 
             $extractedInfo = $this->resumeAnalysisService->extractResumeInformation($fileUrl);
 
             $resume = Resume::create([
-                'filename' => $originalFileName,
-                'fileUri' => $path,
-                'userId' => auth()->id(),
+                'fileName' => $originalFileName,
+                'fileUrl' => $fileUrl,
+                'jobSeekerId' => auth()->id(),
                 'contactDetails' => json_encode([
                     'name' => auth()->user()->name,
                     'email' => auth()->user()->email,
@@ -89,7 +95,7 @@ class JobVacancyController extends Controller
             'status' => 'pending',
             'jobVacancyId' => $id,
             'resumeId' => $resumeId,
-            'userId' => auth()->id(),
+            'jobSeekerId' => auth()->id(),
             'aiGeneratedScore' => $evaluation['aiGeneratedScore'],
             'aiGeneratedFeedback' => $evaluation['aiGeneratedFeedback'],
         ]);

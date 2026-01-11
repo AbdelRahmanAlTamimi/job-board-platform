@@ -55,7 +55,7 @@
                                     <input type="radio" name="resume_option" id="{{ $resume->id }}" value="{{ $resume->id }}"
                                         @error('resume_option') class="border-red-500" @else class="border-gray-600" @enderror />
                                     <x-input-label for="existing_{{ $resume->id }}" class="text-white cursor-pointer">
-                                    {{ $resume->filename }}
+                                    {{ $resume->fileName }}
                                     <span class="text-gray-400 text-sm">(Last updated: {{ $resume->updated_at->format('M d, Y') }})</span>
                                     </x-input-label>
                                 </div>

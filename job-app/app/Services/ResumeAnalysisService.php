@@ -151,13 +151,15 @@ class ResumeAnalysisService
 
         $storagePath = "resumes/{$filename}";
 
-        if (!Storage::disk('cloud')->exists($storagePath)) {
-            throw new \Exception('File not found');
+        // Read the file from local public storage (no S3 usage)
+        $localPath = Storage::disk('public')->path($storagePath);
+        if (!file_exists($localPath)) {
+            throw new \Exception("File not found in public storage: {$storagePath}");
         }
 
-        $pdfContent = Storage::disk('cloud')->get($storagePath);
-        if (!$pdfContent) {
-            throw new \Exception('Failed to read file');
+        $pdfContent = file_get_contents($localPath);
+        if ($pdfContent === false) {
+            throw new \Exception("Failed to read file from public storage: {$storagePath}");
         }
 
         file_put_contents($tempFile, $pdfContent);
