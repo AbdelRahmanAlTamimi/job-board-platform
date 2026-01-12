@@ -30,6 +30,35 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        // seed a deterministic company owner and their company for easy testing
+        $owner = User::firstOrCreate([
+            'email' => 'owner@example.com',
+        ], [
+            'name' => 'Company Owner',
+            'password' => bcrypt('12345678'),
+            'role' => 'company-owner',
+            'email_verified_at' => now(),
+        ]);
+
+        Company::firstOrCreate([
+            'name' => 'Example Company',
+        ], [
+            'address' => '123 Example St',
+            'industry' => 'Software',
+            'website' => 'https://example.com',
+            'ownerId' => $owner->id,
+        ]);
+
+        // seed a deterministic job seeker for easy testing
+        User::firstOrCreate([
+            'email' => 'jobseeker@example.com',
+        ], [
+            'name' => 'Job Seeker',
+            'password' => bcrypt('12345678'),
+            'role' => 'job-seeker',
+            'email_verified_at' => now(),
+        ]);
+
         $jobData = json_decode(file_get_contents(database_path('data/job_data.json')), true);
         $jobApplications = json_decode(file_get_contents(database_path('data/job_applications.json')), true);
 

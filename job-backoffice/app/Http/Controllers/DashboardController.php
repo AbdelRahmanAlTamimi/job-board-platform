@@ -14,6 +14,9 @@ class DashboardController extends Controller
             $analytics = $this->adminDashboard();
         } else {
             $analytics = $this->companyOwnerDashboard();
+            if (is_array($analytics) && isset($analytics['error'])) {
+                return redirect()->back()->with('error', $analytics['error']);
+            }
         }
 
         return view('dashboard.index', compact(['analytics']));
@@ -69,9 +72,18 @@ class DashboardController extends Controller
 
     private function companyOwnerDashboard()
     {
+        $company = auth()->user()->ownedCompanies()->first();
+        $companyTrashed = auth()->user()->ownedCompanies()->withTrashed()->first();
 
-        $company = auth()->user()->ownedCompanies;
-        // dd($company);
+        if (!$company) {
+            if ($companyTrashed) {
+                $message = 'Your company has been deleted. Please contact the administrator to restore it or create a new one.';
+            } else {
+                $message = 'You do not have a company yet. Please create one to access the company dashboard.';
+            }
+
+            return ['error' => $message];
+        }
         // filter active users by applying to jobs of the company
         $activeUsers = User::where('last_login_at', '>=', now()->subDays(30))
             ->where('role', 'job-seeker')

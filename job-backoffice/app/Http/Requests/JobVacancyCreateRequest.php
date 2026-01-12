@@ -26,7 +26,7 @@ class JobVacancyCreateRequest extends FormRequest
             'location' => 'required|string|max:255',
             'salary' => 'required|numeric|min:0',
             'type' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'jobCategoryId' => 'required|string|max:255',
             'companyId' => 'required|string|max:255',
         ];
